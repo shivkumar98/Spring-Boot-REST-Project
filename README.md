@@ -81,3 +81,110 @@ INSERT INTO `employee` VALUES
 * I unzip the `cruddemo` folder and place it [here](/cruddemo/)
 
 * I open up the pom.xml in IntelliJ
+
+## 🟦 3 Spring Boot REST DAO
+
+*  In order for Spring Boot Dev Tools to work properly I change the following settings:
+1) Build, Execution, Deployment > Compiler > Tick Build Project Automatically
+2) Advanced Settings > Tick Allow auto-make to start even if developed application is currently running
+
+* I update the database configuration in [application.properties]():
+
+```properties
+# JDBC properties
+spring.datasource.url=jdbc:mysql://localhost:3306/employee_directory
+spring.datasource.username=root
+spring.datasource.password=root
+```
+
+*  I create my `Employee` entity class in a new package called `entity`:
+
+![](screenshots/2023-07-23-15-07-26.png)
+
+* I define the class as:
+
+```java
+@Entity
+@Table(name="employee")
+public class Employee {
+
+    @Id
+    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(name="first_name")
+    private String firstName;
+    @Column(name="last_name")
+    private String lastName;
+    @Column(name="email")
+    private String email;
+
+    public Employee() {}
+    public Employee(String firstName, String lastName, String email){
+        this.firstName = firstName; this.lastName=lastName; this.email=email;
+    }
+
+    // getters and setters and toString()   
+}
+```
+
+* I create an interface and implementation in a new `dao` package:
+
+![](screenshots/2023-07-23-15-19-47.png)
+
+* The interface is defined as:
+
+```java
+public interface EmployeeDAO {
+  List<Employee> findAll();
+}
+```
+
+* The implementation is defined as:
+
+```java
+@Repository
+public class EmployeeDAOJpaImpl {
+  private EntityManager entityManager;
+  @Autowired
+  public EmployeeDAOJpaImpl(EntityManager entityManager) {
+    this.entityManager = entityManager;
+  }
+  @Override
+  public List<Employeee> findAll() {
+    TypedQuery<Employee> query = entityManager.createQuery("FROM Employee", Employee.class);
+    List<Employee> list = query.getResultList();
+    return list;
+  }
+}
+```
+
+* I then create my REST controller in a new `rest` package:
+
+![](screenshots/2023-07-23-15-26-16.png)
+
+* We do a quick and dirty implementation where we inject the DAO directly into the controller:
+
+```java
+@RestController
+@RequestMapping("api")
+public class EmployeeRestController {
+    private EmployeeDAO employeeDAO;
+    public EmployeeRestController(EmployeeDAO employeeDAO) {
+        this.employeeDAO = employeeDAO;
+    }
+    @GetMapping("employee")
+    public List<Employee> findAll() {
+        return employeeDAO.findAll();
+    }
+}
+```
+
+* I run the application and realise I made the following typos:
+1) I missed the `@Id` annotation for the Id field on Employee
+2) In the query, I typed: `entityManager.createQuery("FROM employee", Employee.class);`. I thought this was using the table name but its actually referencing the class!
+
+* I run the application after fixing the above issues! I get the following result in my browser:
+
+![](screenshots/2023-07-23-15-37-41.png)
+
