@@ -88,6 +88,8 @@ INSERT INTO `employee` VALUES
 1) Build, Execution, Deployment > Compiler > Tick Build Project Automatically
 2) Advanced Settings > Tick Allow auto-make to start even if developed application is currently running
 
+### 💻 Coding 💻
+
 * I update the database configuration in [application.properties]():
 
 ```properties
@@ -188,3 +190,64 @@ public class EmployeeRestController {
 
 ![](screenshots/2023-07-23-15-37-41.png)
 
+## 🟦 4 Spring Boot Service Layer
+
+* We shall create a Service which will interact with the `EmployeeDAO`. A service layer allows us to create custom business logic and integrate data from multiple data sources.
+
+* This is an implementation of the **Service Facade** design pattern - an object serves as a front-facing interface which masks more complex code. This improves readability and useability and provides more loosely coupled code!
+
+* We will use `@Service` annotation  and spring will automatically register the service implementation thanks to component scanning!
+
+### 💻 Coding 💻
+
+* I create a new `service` package for my `EmployeeService` interface:
+
+![](screenshots/2023-07-24-09-57-47.png)
+
+* The interface is defines as:
+
+```java
+public interface EmployeeService {
+    List<Employee> findAll();
+}
+```
+
+* I implemented this interface using `EmployeeServiceImpl` defined as:
+
+```java
+@Service
+public class EmployeeServiceImpl {
+  private EmployeeDAO employeeDAO;
+  public EmployeeServiceImpl(EmployeeDAO employeeDAO) {
+    this.employeeDAO = employeeDAO;
+  }
+  @Override
+  public List<Employee> findAll() {
+    employeeDAO.findAll();
+  }
+}
+```
+
+* I update the `EmployeeRestController` to use the above service:
+
+```java
+@RestController
+@RequestMapping("api")
+public class EmployeeRestController {
+
+    private EmployeeService employeeService; // CHANGED FROM EmployeeDAO
+
+    public EmployeeRestController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+    @GetMapping("employee")
+    public List<Employee> findAll() {
+        return employeeService.findAll();
+    }
+
+}
+```
+
+* I run my Spring application and it all works:
+
+![](screenshots/2023-07-24-10-06-32.png)
