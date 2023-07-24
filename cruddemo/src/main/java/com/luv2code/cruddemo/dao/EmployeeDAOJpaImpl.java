@@ -26,7 +26,7 @@ public class EmployeeDAOJpaImpl implements EmployeeDAO {
 
     @Override
     public Employee findById(int id) {
-        TypedQuery<Employee> employee = entityManager.createQuery("From Employee WHERE id='" + id + "'", Employee.class);
+        TypedQuery<Employee> employee = entityManager.createQuery("From Employee WHERE id="+id, Employee.class);
         return  employee.getSingleResult();
     }
 

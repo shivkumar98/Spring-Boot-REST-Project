@@ -348,3 +348,36 @@ public class EmployeeServiceImpl implements EmployeeService {
 ```
 
 * I apply `@Transactional` to all the methods which will modify the db in anyway!
+
+## 🟦 7 Get Single Employee
+
+* I create a new mapping in my REST controller which will retrieve a single employee using the employeeID:
+
+* I create a new method in the `EmployeeRestController`:
+
+```java
+@GetMapping("getEmployee/{employeeId}")
+public Employee getEmployeeId(@PathVariable int employeeId) {
+  Employee employee = employeeService.findById(employeeId);
+  if (employee == null) {
+    throw new RuntimeException("Employee was not found");
+  }
+  return employee;
+}
+```
+
+* I check if this endpoint is working! I get an obscure message and realise my implementation of `findById()` is incorrect in my `EmployeeDEOJpaImpl` class!
+
+* I fix the method implementation:
+
+```java
+@Override
+    public Employee findById(int id) {
+        TypedQuery<Employee> employee = entityManager.createQuery("From Employee WHERE id="+id, Employee.class);
+        return  employee.getSingleResult();
+    }
+```
+
+* Now I rerun my application and everything is working as intended:
+
+![](screenshots/getEmployeeById.gif)

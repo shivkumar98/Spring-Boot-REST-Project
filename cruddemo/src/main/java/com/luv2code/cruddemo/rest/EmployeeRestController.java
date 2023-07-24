@@ -3,7 +3,9 @@ package com.luv2code.cruddemo.rest;
 import com.luv2code.cruddemo.dao.EmployeeDAO;
 import com.luv2code.cruddemo.entity.Employee;
 import com.luv2code.cruddemo.service.EmployeeService;
+import org.hibernate.annotations.Parameter;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,4 +25,12 @@ public class EmployeeRestController {
         return employeeService.findAll();
     }
 
+    @GetMapping("employee/getEmployee/{employeeId}")
+    public Employee getEmployeeById(@PathVariable int employeeId) {
+        Employee employee = employeeService.findById(employeeId);
+        if (employee == null) {
+            throw new RuntimeException("Employee was not found");
+        }
+        return employee;
+    }
 }
