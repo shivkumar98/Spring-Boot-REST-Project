@@ -300,3 +300,51 @@ public class EmployeeDAOJpaImpl implements EmployeeDAO {
 ```
 
 * Note the `save()` method will only insert the employee into the DB if the ID is not 0! Otherwise it will just update the employee!
+
+
+## 🟦 6 Spring Boot DAO: Add, Update, Delete
+
+### 💻 Coding 💻
+
+* I update the `EmployeeService` interface:
+
+```java
+public interface EmployeeService {
+    List<Employee> findAll();
+    Employee findById(int id);
+    Employee save(Employee employee);
+    void deleteById(int id);
+}
+```
+
+* I update the `EmployeeServiceImpl` to implement the unimplemented methods and delegate the calls to `employeeDAO`
+
+```java
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+
+    private EmployeeDAO employeeDAO;
+    public EmployeeServiceImpl(EmployeeDAO employeeDAO) {
+        this.employeeDAO = employeeDAO;
+    }
+    public List<Employee> findAll() {
+        return employeeDAO.findAll();
+    }
+
+    public Employee findById(int id) { // NEW METHOD
+        return employeeDAO.findById(id);
+    }
+
+    @Transactional
+    public Employee save(Employee employee) { // NEW METHOD
+        return employeeDAO.save(employee);
+    }
+
+    @Transactional
+    public void deleteById(int id) { // NEW METHOD
+        employeeDAO.deleteById(id);
+    }
+}
+```
+
+* I apply `@Transactional` to all the methods which will modify the db in anyway!
