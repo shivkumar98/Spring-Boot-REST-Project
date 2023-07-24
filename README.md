@@ -251,3 +251,52 @@ public class EmployeeRestController {
 * I run my Spring application and it all works:
 
 ![](screenshots/2023-07-24-10-06-32.png)
+
+
+## 🟦 5 Spring Boot DAO: Add, Update, Delete
+
+* It's best practice to apply transactional boundaried at the serive layer and remove it from the DAO layer (if they exist)
+
+### 💻 Coding 💻
+
+* I update the `EmployeeDAO` interface to include the following methods:
+
+```java
+public interface EmployeeDAO {
+    List<Employee> findAll();
+    Employee findById(int id);
+    Employee save(Employee employee);
+    void deleteById(int id);
+}
+```
+
+* I override the unimplemented methods in `EmployeeDAOJpaImpl`:
+
+```java
+@Repository
+public class EmployeeDAOJpaImpl implements EmployeeDAO {
+    private EntityManager entityManager;
+    public EmployeeDAOJpaImpl(EntityManager entityManager){
+        this.entityManager = entityManager;
+    }
+    public List<Employee> findAll() {
+        TypedQuery<Employee> query = entityManager.createQuery("FROM Employee", Employee.class);
+        List<Employee> list = query.getResultList();
+        return list;
+    }
+    public Employee findById(int id) {
+        TypedQuery<Employee> employee = entityManager.createQuery("From Employee WHERE id='" + id + "'", Employee.class);
+        return  employee.getSingleResult();
+    }
+    public Employee save(Employee employee) {
+        Employee dbEmployee = entityManager.merge(employee); // saves or updates depending on id
+        return dbEmployee;
+    }
+    public void deleteById(int id) {
+        Employee employee = entityManager.find(Employee.class, id);
+        entityManager.remove(employee);
+    }
+}
+```
+
+* Note the `save()` method will only insert the employee into the DB if the ID is not 0! Otherwise it will just update the employee!
