@@ -439,3 +439,54 @@ public String deleteEmployee(@PathVariable int employeeId) {
 * I verify I can delete an employee:
 
 ![](screenshots/2023-07-25-11-05-51.png)
+
+## 🟦 11 Spring Data JPA
+
+* PROBLEM: I want to create a new entity but I don't want to write a bunch of boiler-plate code.
+
+* SOLUTION: Spring Data JPA provides CRUD elements  just by supplying the entity and the primary key!
+
+* Spring Data JPA provides a `JpaRepository` interface which will provide the following methods: `findAll()`, `findById()`, `save()`, `deleteById()` and others!
+
+### 💻 Coding 💻
+
+* I refresh my SQL database by running the script from the sample data again!
+
+* I create a copy of the `cruddemo` folder and rename it to `cruddemo_v2`
+
+* I delete `EmployeeDAO` and `EmployeeDAOJpaImpl` from the `dao` package!
+
+* I define a new interface - `EmployeeRepository`:
+
+```java
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+}
+```
+
+* I then refactor `EmployeeServiceImpl` to use EmployeeRepository:
+
+```java
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+    private EmployeeRepository employeeRepository;
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository; 
+    }
+    public List<Employee> findAll() {
+        return employeeRepository.findAll(); 
+    }
+    public Employee findById(int id) {
+        return employeeRepository.findById(id).orElseGet(()->null); 
+    }
+    // @Transactional - no longer needed
+    public Employee save(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+    // @Transactional - no longer needed
+    public void deleteById(int id) {
+         employeeRepository.deleteById(id);
+    }
+}
+```
+
+* I run the application, and all the CRUD operations are behaving normally!
