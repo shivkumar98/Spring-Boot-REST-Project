@@ -421,3 +421,21 @@ public Employee updateEmployee(@RequestBody Employee employee) {
 * I verify that this new endpoint is working:
 
 ![](screenshots/2023-07-25-10-53-04.png)
+
+## 🟦 10 Delete an Employee
+
+* I create a new endpoint which lets the user delete an employee via ID:
+
+```java
+@DeleteMapping("/employees/{employeeId}")
+public String deleteEmployee(@PathVariable int employeeId) {
+    if (employeeService.findById(employeeId) == null)
+        throw new RuntimeException("Employee ID not found: "+employeeId);
+    employeeService.deleteById(employeeId);
+    return "Employee successfully deleted! ID: "+employeeId;
+}
+```
+
+* I verify I can delete an employee:
+
+![](screenshots/2023-07-25-11-05-51.png)

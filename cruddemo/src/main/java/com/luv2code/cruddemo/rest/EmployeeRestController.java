@@ -4,6 +4,7 @@ import com.luv2code.cruddemo.dao.EmployeeDAO;
 import com.luv2code.cruddemo.entity.Employee;
 import com.luv2code.cruddemo.service.EmployeeService;
 import org.hibernate.annotations.Parameter;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,5 +50,13 @@ public class EmployeeRestController {
         // if employee exists then update, else save employee
         Employee updatedEmployee = employeeService.save(employee);
         return updatedEmployee;
+    }
+
+    @DeleteMapping("/employees/{employeeId}")
+    public String deleteEmployee(@PathVariable int employeeId) {
+        if (employeeService.findById(employeeId) == null)
+            throw new RuntimeException("Employee ID not found: "+employeeId);
+        employeeService.deleteById(employeeId);
+        return "Employee successfully deleted! ID: "+employeeId;
     }
 }
