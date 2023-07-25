@@ -404,3 +404,20 @@ public Employee saveEmployee(@RequestBody Employee employee) {
 * I verify that the new employee appears in the database:
 
 ![](screenshots/2023-07-25-10-43-12.png)
+
+## 🟦 9 Update an Existing Employee
+
+* I will create a new endpoint in my controller which will allow the user to update an existing employee and return the updated employee back!
+
+```java
+@PutMapping("/employees/")
+public Employee updateEmployee(@RequestBody Employee employee) {
+    // if employee exists then update, else save employee
+    Employee updatedEmployee = employeeService.save(employee);
+    return updatedEmployee;
+}
+```
+
+* I verify that this new endpoint is working:
+
+![](screenshots/2023-07-25-10-53-04.png)

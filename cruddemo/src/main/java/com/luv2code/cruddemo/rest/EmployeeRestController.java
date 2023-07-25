@@ -7,6 +7,7 @@ import org.hibernate.annotations.Parameter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,10 +37,17 @@ public class EmployeeRestController {
         return employee;
     }
 
-    @PostMapping("/employees/")
+    @PostMapping("/employees")
     public Employee saveEmployee(@RequestBody Employee employee) {
         employee.setId(0); // just in case user supplied uneeded parameter
         Employee savedEmployee = employeeService.save(employee);
         return savedEmployee;
+    }
+
+    @PutMapping("/employees")
+    public Employee updateEmployee(@RequestBody Employee employee) {
+        // if employee exists then update, else save employee
+        Employee updatedEmployee = employeeService.save(employee);
+        return updatedEmployee;
     }
 }
