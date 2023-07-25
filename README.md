@@ -381,3 +381,26 @@ public Employee getEmployeeId(@PathVariable int employeeId) {
 * Now I rerun my application and everything is working as intended:
 
 ![](screenshots/getEmployeeById.gif)
+
+## 🟦 8 Add an Employee
+
+* I create a new mapping in my controller which is a POST method to create and save a new employee:
+
+```java
+@PostMapping("/employees")
+public Employee saveEmployee(@RequestBody Employee employee) {
+    employee.setId(0); // just in case user supplied uneeded parameter
+    Employee savedEmployee = employeeService.save(employee);
+    return savedEmployee;
+}
+```
+
+* I make a POST request in postman:
+
+![](screenshots/2023-07-25-10-42-09.png)
+
+* A response was recieved so the post method works!!!
+
+* I verify that the new employee appears in the database:
+
+![](screenshots/2023-07-25-10-43-12.png)
