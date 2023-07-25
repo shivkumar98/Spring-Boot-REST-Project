@@ -575,3 +575,45 @@ spring.data.rest.base-path=/magic-api
 ```
 
 * Now we have endpoints like `http://localhost:8080/magic-api/employees`
+
+## 🟦 12 Spring Data REST Config and Sorting
+
+### ⚙️ Configuration ⚙️
+
+* Spring Data REST does not handle complex pluralised names for entities. I.e `Goose` becomes `gooses`
+
+* We have a solution to this issue. E.g. suppose we wanted our endpoints to contain `members` and not `employees`. We can use the `@RespositoryRestResource`:
+
+```java
+@RepositoryRestResource(path="members")
+public interface EmployeeRespository extends JpaRepository<Employee, Integer> {
+}
+```
+
+### 📄 Paging 📄
+
+* By default, Spring REST will return 20 elements per page. The pages can be accessed via the URL (e.g. page 1 is `http://localhost:8080/magic-api/employees?page=0`)
+
+* We can override the number of elements, and page number limits via the following properties:
+
+| Name                                 | Description          |
+| ------------------------             | ---------------------|
+|`spring.data.rest.base-path`          | Base path used to expose repository resources |
+| `spring.data.rest.default-page-size` | Default size of pages`  |
+| `spring.data.rest.max-page-size`     | Maximum size of pages  |
+
+### 📊 Soring 📊
+
+* We can sort by the property names of the entity by specifying a paramater in the URL.
+
+* E.g. to sort the json by last name, descending we would use:
+
+```url
+http://localhost:8080/magic-api/employees?sort=lastName,desc
+```
+
+* If we wanted to sory by last name, then first name:
+
+```url
+http://localhost:8080/magic-api/employees?sort=lastName,firstName,asc
+```
