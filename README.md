@@ -476,7 +476,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAll(); 
     }
     public Employee findById(int id) {
-        return employeeRepository.findById(id).orElseGet(()->null); 
+        return employeeRepository.findById(id).orElseThrow(()->new RuntimeException("Did not find employee"));
     }
     // @Transactional - no longer needed
     public Employee save(Employee employee) {
@@ -490,3 +490,88 @@ public class EmployeeServiceImpl implements EmployeeService {
 ```
 
 * I run the application, and all the CRUD operations are behaving normally!
+
+
+## 🟦 12 Spring Data REST
+
+* Spring Data REST leverages the existing `JpaRepository` subclasses and expose the endpoints for free!
+
+* Spring Data REST will create the endpoints using the entity name, making it lowercase and making it pluralised. `Employee` -> `employees`
+
+* All we need to do this is update the Maven POM file with the following dependency:
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-rest</artifactId>
+</dependency>
+```
+
+### 🎭 HATEOAS 🎭
+
+* Spring Data REST endpointsd are HATEOAS compilant, i.e. the meta-data of the responses will be compiant
+
+* E.g. the REST response from `GET /employee/3`:
+
+```json
+{
+    "firstName": "Shiv",
+    "lastName": "Kumar",
+    "email": "shiv@email.com",
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/employees/3"
+        },
+        "employee": {
+            "href": "http://localhost:8080/employees/3"
+        }
+    }
+}
+```
+* If the REST response is a collection, then the meta data will contain page size, total elements, pages etc. E.g.:
+
+```json
+{
+    "_embedded": {
+        "employees": [
+            {
+                "firstName": "Shiv",
+                ...
+            },
+            ...
+        ]
+    },
+    "page": {
+        "size": 20,
+        "totalElements": 5,
+        "totalPages": 1,
+        "number": 0
+    }
+}
+```
+
+### 💻 Coding 💻
+
+* I refresh my database and make a clone of `crumdemo_v2` called `crumdemo_v3`
+
+* I update the `pom.xml` to include the following dependency:
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-rest</artifactId>
+</dependency>
+```
+
+* I'll delete my `service` and `rest` packages of my project!
+
+* I run the application and I am able to retrieve the employees information by going to `localhost:8080/employees`
+
+* I can update the endpoint locations by specifying some properties in `application.properties`:
+
+```properties
+# Spring Data REST properties
+spring.data.rest.base-path=/magic-api
+```
+
+* Now we have endpoints like `http://localhost:8080/magic-api/employees`

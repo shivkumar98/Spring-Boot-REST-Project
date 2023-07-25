@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee findById(int id) {
-        return employeeRepository.findById(id).orElseGet(()->null);
+        return employeeRepository.findById(id).orElseThrow(()->new RuntimeException("Did not find employee"));
     }
 
     // @Transactional - no longer needed
