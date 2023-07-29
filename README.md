@@ -576,7 +576,7 @@ spring.data.rest.base-path=/magic-api
 
 * Now we have endpoints like `http://localhost:8080/magic-api/employees`
 
-## 🟦 12 Spring Data REST Config and Sorting
+## 🟦 13 Spring Data REST Config and Sorting
 
 ### ⚙️ Configuration ⚙️
 
